@@ -1,53 +1,76 @@
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.*;
-
-class Dato{
-	String ans;
-
-	public Dato(String valor) {
-		this.ans = valor;
-	}
-}
 
 
 class Concurrencia extends JFrame{
 
-	GridBagLayout gbl = new GridBagLayout();
-	GridBagConstraints gbc = new GridBagConstraints();
-
 	public Concurrencia(){
-		getContentPane().setLayout(gbl);
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setLocationRelativeTo(null);
+		getContentPane().setLayout(null);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setTitle("Concurrencia");
-		gbc.fill=GridBagConstraints.BOTH;
+		setSize(800,500);
+		setLocationRelativeTo(null);
 		setVisible(true);
 
-		Dato datos[] = new Dato[10000000];
+		ArrayList<String> datos = new ArrayList<String>();
 		for (int i = 0; i < 10000000; i++) {
 			int x = (int)(Math.round(Math.random()));
-			if (x==1) {
-				datos[i]=new Dato("Si");
+			if (x==0) {
+				datos.add("No");
 			}else {
-				datos[i]=new Dato("No");
+				datos.add("Si");
 			}
-			System.out.println(datos[i].ans);
+			
 		}
 
 
-		JTextArea display = new JTextArea();
-	    display.setEditable(false);
-	    display.setLineWrap(true);
-	    display.setWrapStyleWord(true);
-	    JScrollPane scroll = new JScrollPane(display);
-	    scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scroll.setBounds(277, 323, 463, 150);
+		JLabel resultadosSi = new JLabel("Resultados Si");
+		resultadosSi.setBounds(42, 36, 170, 25);
+		add(resultadosSi);
 
-		add(scroll);
+		JLabel resultadosNo = new JLabel("Resultados No");
+		resultadosNo.setBounds(290, 36, 170, 25);
+		add(resultadosNo);
 
-		pack();
+		JLabel conteoSi = new JLabel("Conteo: ");
+		conteoSi.setBounds(42, 75, 90, 25);
+		add(conteoSi);
+
+		JLabel conteoNo = new JLabel("Conteo: ");
+		conteoNo.setBounds(290, 75, 90, 25);
+		add(conteoNo);
+
+		JTextArea numConteoSi = new JTextArea();
+		numConteoSi.setEditable(false);
+		numConteoSi.setBounds(90,79,100,25);
+		add(numConteoSi);
+
+		JTextArea numConteoNo = new JTextArea();
+		numConteoNo.setEditable(false);
+		numConteoNo.setBounds(340,79,100,25);
+		add(numConteoNo);
+
+		JTextArea indicesSi = new JTextArea();
+		indicesSi.setEditable(false);
+		indicesSi.setLineWrap(true);
+		indicesSi.setWrapStyleWord(true);
+	    JScrollPane scrollSi = new JScrollPane(indicesSi);
+	    scrollSi.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+	    scrollSi.setBounds(42,120,210,320);
+	    add(scrollSi);
+
+	    JTextArea indicesNo = new JTextArea();
+		indicesNo.setEditable(false);
+		indicesNo.setLineWrap(true);
+		indicesNo.setWrapStyleWord(true);
+	    JScrollPane scrollNo = new JScrollPane(indicesNo);
+	    scrollNo.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+	    scrollNo.setBounds(290,120,210,320);
+	    add(scrollNo);
 	}
 
 }
