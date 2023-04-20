@@ -2,6 +2,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
@@ -13,7 +14,7 @@ class Concurrencia extends JFrame implements ActionListener{
 	ArrayList<String> datos = new ArrayList<String>();
 	JButton start;
 	JTextArea indicesSi, indicesNo, numConteoSi, numConteoNo, numPorcentajeSi, numPorcentajeNo;
-	JProgressBar pgsBar;
+	JProgressBar pgsBar, siBar, noBar;
 
 	public Concurrencia(){
 		getContentPane().setLayout(null);
@@ -83,13 +84,25 @@ class Concurrencia extends JFrame implements ActionListener{
 	    add(pgsBar);
 	    pgsBar.setValue(0);
 	    pgsBar.setStringPainted(true);
+	    
+	    siBar = new JProgressBar();
+	    siBar.setBounds(520, 170, 245, 40);
+	    add(siBar);
+	    siBar.setValue(0);
+	    siBar.setStringPainted(true);
+
+	    noBar = new JProgressBar();
+	    noBar.setBounds(520, 210, 245, 40);
+	    add(noBar);
+	    noBar.setValue(0);
+	    noBar.setStringPainted(true);
 
 	    JLabel porcentajeSi = new JLabel("Porcentaje Si:");
 	    porcentajeSi.setBounds(530, 100, 150, 25);
 	    add(porcentajeSi);
 
 	    JLabel porcentajeNo = new JLabel("Porcentaje No:");
-	    porcentajeNo.setBounds(530, 165, 150, 25);
+	    porcentajeNo.setBounds(530, 135, 150, 25);
 	    add(porcentajeNo);
 
 	    numPorcentajeSi = new JTextArea();
@@ -99,11 +112,11 @@ class Concurrencia extends JFrame implements ActionListener{
 
 		numPorcentajeNo = new JTextArea();
 	    numPorcentajeNo.setEditable(false);
-	    numPorcentajeNo.setBounds(640,165,100,25);
+	    numPorcentajeNo.setBounds(640,135,100,25);
 		add(numPorcentajeNo);
 		
 		start = new JButton("Iniciar");
-		start.setBounds(630,250,145,40);
+		start.setBounds(580,260,145,40);
 		start.addActionListener(this);
 		add(start);
 
@@ -142,10 +155,25 @@ class Concurrencia extends JFrame implements ActionListener{
 			int sz = datos.size();
 			int szc = sz/100;
 			int i = 0;
+			NumberFormat df = NumberFormat.getPercentInstance();
+			df.setMinimumFractionDigits(2);
 			while(i<100) {
-				if ((indicesSi.getLineCount()+indicesNo.getLineCount())>=((i+1)*szc)) {
+				int iSi = indicesSi.getLineCount();
+				int iNo = indicesNo.getLineCount();
+				if ((iSi+iNo)>=((i+1)*szc)) {
 					i+=1;
 					pgsBar.setValue(i);
+					numConteoSi.setText(""+(iSi-1));
+					numConteoNo.setText(""+(iNo-1));
+
+					double pSi = (double)iSi/((double)iSi+(double)iNo);
+					double pNo = 1-pSi;
+
+					siBar.setValue((int)(pSi*100));
+					noBar.setValue((int)(pNo*100));
+
+					numPorcentajeSi.setText(df.format(pSi));
+					numPorcentajeNo.setText(df.format(pNo));
 				}
 				try {
 					currentThread().sleep(1000);
