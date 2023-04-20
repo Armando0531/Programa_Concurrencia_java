@@ -112,14 +112,16 @@ class Concurrencia extends JFrame implements ActionListener{
 	class MostrarDatos extends Thread{
 
 		public void run() {
+			int sz = datos.size();
+			int szc = sz/100;
 			String x="",y="";
-			for (int i = 0; i <datos.size(); i++) {
-				if (datos.get(i).contains("Si")) {
+			for (int i = 0; i <sz; i++) {
+				if (datos.get(i)=="Si") {
 					x+=(i+"\n");
 				}else {
 					y+=(i+"\n");
 				}
-				if ((i+1)%100000==0) {
+				if ((i+1)%szc==0) {
 					indicesSi.append(x);
 					indicesNo.append(y);
 					x="";
@@ -133,12 +135,36 @@ class Concurrencia extends JFrame implements ActionListener{
 	}
 		
 	}
+	
+	class Histograma extends Thread{
+
+		public void run() {
+			int sz = datos.size();
+			int szc = sz/100;
+			int i = 0;
+			while(i<100) {
+				if ((indicesSi.getLineCount()+indicesNo.getLineCount())>=((i+1)*szc)) {
+					i+=1;
+					pgsBar.setValue(i);
+				}
+				try {
+					currentThread().sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource()==start) {
 			MostrarDatos md = new MostrarDatos();
 			md.start();
+			Histograma hg = new Histograma();
+			hg.start();
 		}
 		
 	
