@@ -123,13 +123,19 @@ class Concurrencia extends JFrame implements ActionListener{
 	}
 
 	class MostrarDatos extends Thread{
+		
+		ArrayList<String> dts = new ArrayList<String>();
+
+		public MostrarDatos(ArrayList<String> dts) {
+			this.dts = dts;
+		}
 
 		public void run() {
-			int sz = datos.size();
+			int sz = dts.size();
 			int szc = sz/100;
 			String x="",y="";
 			for (int i = 0; i <sz; i++) {
-				if (datos.get(i)=="Si") {
+				if (dts.get(i)=="Si") {
 					x+=(i+"\n");
 				}else {
 					y+=(i+"\n");
@@ -162,18 +168,20 @@ class Concurrencia extends JFrame implements ActionListener{
 				int iNo = indicesNo.getLineCount();
 				if ((iSi+iNo)>=((i+1)*szc)) {
 					i+=1;
-					pgsBar.setValue(i);
+					
 					numConteoSi.setText(""+(iSi-1));
 					numConteoNo.setText(""+(iNo-1));
 
 					double pSi = (double)iSi/((double)iSi+(double)iNo);
 					double pNo = 1-pSi;
 
-					siBar.setValue((int)(pSi*100));
-					noBar.setValue((int)(pNo*100));
 
 					numPorcentajeSi.setText(df.format(pSi));
 					numPorcentajeNo.setText(df.format(pNo));
+					
+					pgsBar.setValue(i);
+					siBar.setValue((int)(pSi*100));
+					noBar.setValue((int)(pNo*100));
 				}
 				try {
 					currentThread().sleep(1000);
@@ -189,8 +197,20 @@ class Concurrencia extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource()==start) {
-			MostrarDatos md = new MostrarDatos();
-			md.start();
+
+			Runtime runtime = Runtime.getRuntime();
+			int ap = runtime.availableProcessors()-1;
+
+			while(datos.size()%ap!=0) {
+				ap-=1;
+			}
+			for (int i = 0; i < ap; i++) {
+				ArrayList<String> dts;
+				dts = new ArrayList<String>(datos.subList((i)*(datos.size()/ap), ((i+1))*(datos.size()/ap)));
+
+				MostrarDatos md = new MostrarDatos(dts);
+				md.start();	
+			}
 			Histograma hg = new Histograma();
 			hg.start();
 		}
